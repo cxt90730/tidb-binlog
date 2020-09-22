@@ -117,7 +117,13 @@ func createDSyncer(cfg *SyncerConfig, schema *Schema, info *loopbacksync.LoopBac
 		if err != nil {
 			return nil, errors.Annotate(err, "fail to create mysql dsyncer")
 		}
-		// only use for test
+	// only use for test
+	case "tikv":
+		dsyncer, err = dsync.NewTikvSyncer(cfg.To.PdAddress, schema)
+		if err != nil {
+			return nil, errors.Annotate(err, "fail to create tikv dsyncer")
+		}
+
 	case "_intercept":
 		dsyncer = newInterceptSyncer()
 	default:

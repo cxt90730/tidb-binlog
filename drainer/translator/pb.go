@@ -56,7 +56,6 @@ func TiBinlogToPbBinlog(infoGetter TableInfoGetter, schema string, table string,
 		pbBinlog.DdlQuery = []byte(sql)
 	} else {
 		pbBinlog.DmlData = new(pb.DMLData)
-
 		for _, mut := range pv.GetMutations() {
 			var info *model.TableInfo
 			var ok bool
@@ -67,7 +66,7 @@ func TiBinlogToPbBinlog(infoGetter TableInfoGetter, schema string, table string,
 
 			isTblDroppingCol := infoGetter.IsDroppingColumn(mut.GetTableId())
 
-			schema, _, ok = infoGetter.SchemaAndTableName(mut.GetTableId())
+			schema, table, ok = infoGetter.SchemaAndTableName(mut.GetTableId())
 			if !ok {
 				return nil, errors.Errorf("SchemaAndTableName empty table id: %d", mut.GetTableId())
 			}
@@ -143,7 +142,11 @@ func genInsert(schema string, table *model.TableInfo, row []byte) (event *pb.Eve
 		}
 		vals = append(vals, value)
 	}
-
+	fmt.Println("%%%%%%%% Insert %%%%%%%%")
+	fmt.Println("%%%%%%%% vals:", vals)
+	fmt.Println("%%%%%%%% cols:", cols)
+	fmt.Println("%%%%%%%% tps:", tps)
+	fmt.Println("%%%%%%%% mytps:", mysqlTypes)
 	rowData, err := encodeRow(vals, cols, tps, mysqlTypes)
 	if err != nil {
 		return nil, errors.Trace(err)
@@ -188,7 +191,12 @@ func genUpdate(schema string, table *model.TableInfo, row []byte, isTblDroppingC
 			mysqlTypes = append(mysqlTypes, types.TypeToStr(col.Tp, col.Charset))
 		}
 	}
-
+	fmt.Println("%%%%%%%% Update %%%%%%%%")
+	fmt.Println("%%%%%%%% oldVals:", oldVals)
+	fmt.Println("%%%%%%%% newVals:", newVals)
+	fmt.Println("%%%%%%%% cols:", cols)
+	fmt.Println("%%%%%%%% tps:", tps)
+	fmt.Println("%%%%%%%% mytps:", mysqlTypes)
 	rowData, err := encodeUpdateRow(oldVals, newVals, cols, tps, mysqlTypes)
 	if err != nil {
 		return nil, errors.Trace(err)
@@ -227,7 +235,11 @@ func genDelete(schema string, table *model.TableInfo, row []byte) (event *pb.Eve
 			mysqlTypes = append(mysqlTypes, types.TypeToStr(col.Tp, col.Charset))
 		}
 	}
-
+	fmt.Println("%%%%%%%% Delete %%%%%%%%")
+	fmt.Println("%%%%%%%% vals:", vals)
+	fmt.Println("%%%%%%%% cols:", cols)
+	fmt.Println("%%%%%%%% tps:", tps)
+	fmt.Println("%%%%%%%% mytps:", mysqlTypes)
 	rowData, err := encodeRow(vals, cols, tps, mysqlTypes)
 	if err != nil {
 		return nil, errors.Trace(err)

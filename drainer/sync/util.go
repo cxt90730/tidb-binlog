@@ -23,11 +23,12 @@ import (
 
 // DBConfig is the DB configuration.
 type DBConfig struct {
-	Host     string          `toml:"host" json:"host"`
-	User     string          `toml:"user" json:"user"`
-	Password string          `toml:"password" json:"password"`
-	Security security.Config `toml:"security" json:"security"`
-	TLS      *tls.Config     `toml:"-" json:"-"`
+	Host      string          `toml:"host" json:"host"`
+	User      string          `toml:"user" json:"user"`
+	Password  string          `toml:"password" json:"password"`
+	Security  security.Config `toml:"security" json:"security"`
+	TLS       *tls.Config     `toml:"-" json:"-"`
+	PdAddress []string        `toml:"pd_address" json:"pd_address"`
 	// if EncryptedPassword is not empty, Password will be ignore.
 	EncryptedPassword       string           `toml:"encrypted_password" json:"encrypted_password"`
 	SyncMode                int              `toml:"sync-mode" json:"sync-mode"`
